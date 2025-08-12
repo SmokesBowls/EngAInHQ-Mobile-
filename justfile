@@ -31,3 +31,17 @@ diff path content:
 
 promote path:
     python3 clients/clutter_bridge.py promote_artifact "{{path}}"
+
+# === Health ===
+health:
+    @echo "🔎 Running cathedral health checks..."
+    python3 clients/health_check.py
+
+doctor:
+    @echo "📦 Env:"
+    @echo "  CATHEDRAL_URL=${CATHEDRAL_URL}"
+    @echo "  MRLORE_URL=${MRLORE_URL}"
+    @echo "  WARROOM_URL=${WARROOM_URL}"
+    @echo "  MODEL=${MODEL}"
+    @echo
+    just health

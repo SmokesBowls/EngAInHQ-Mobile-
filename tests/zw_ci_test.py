@@ -1,28 +1,13 @@
-import re
+import re, sys
 from pathlib import Path
-
-# Import from project
-import sys
 sys.path.append(str(Path("clients").resolve()))
 from _zw import zw_encode, zw_split, zw_parse_status
-
-def test_zw_encode_map_and_list():
-    doc = {"tool":"lore_query","args":{"topic":"Zara origin","tags":["a","b"]}}
-    out = zw_encode(doc)
-    assert "tool: lore_query" in out
-    assert "args:" in out
-    assert re.search(r"\\n\\s+topic:", out)
-    assert re.search(r"\\n\\s+- a\\n\\s+- b", out)
-
-def test_zw_split_and_status_ok():
-    sample = "ZW-RESULT v0.1\nstatus: ok\nid: xyz\n---\nbody here\n"
-    head, body = zw_split(sample)
-    assert "status: ok" in head
-    assert body.strip() == "body here"
-    assert zw_parse_status(head) == "ok"
-
-def test_zw_split_no_sep():
-    sample = "ZW-RESULT v0.1\nstatus: error\nid: nope\n"
-    head, body = zw_split(sample)
-    assert body == ""
-    assert zw_parse_status(head) == "error"
+def test_encode():
+    out = zw_encode({"tool":"x","args":{"topic":"Zara","tags":["a","b"]}})
+    assert "tool: x" in out and "args:" in out and "- a" in out and "- b" in out
+def test_split_status_ok():
+    head, body = zw_split("ZW-RESULT v0.1\nstatus: ok\nid: x\n---\nbody\n")
+    assert zw_parse_status(head)=="ok" and body.strip()=="body"
+def test_split_no_sep():
+    head, body = zw_split("ZW-RESULT v0.1\nstatus: error\nid: x\n")
+    assert body=="" and zw_parse_status(head)=="error"

@@ -35,3 +35,11 @@ def zw_call(base_url, tool, payload, accept="text/zw", auth=None, timeout=60):
     txt=r.text; sep="\n---\n"; idx=txt.find(sep)
     head=txt if idx==-1 else txt[:idx]; bdy="" if idx==-1 else txt[idx+len(sep):]
     return head, bdy, txt
+def zw_split(txt: str):
+    sep = "\n---\n"; i = txt.find(sep)
+    return (txt if i==-1 else txt[:i], "" if i==-1 else txt[i+len(sep):])
+def zw_parse_status(head: str) -> str:
+    for ln in head.splitlines():
+        if ln.lower().startswith("status:"):
+            return ln.split(":",1)[1].strip().lower()
+    return ""
